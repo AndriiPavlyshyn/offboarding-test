@@ -66,8 +66,6 @@ app.post('/users/:id/offboard', (req, res) => {
 		return res.status(404).json({ message: "Employee not found" });
 	}
 	
-	console.log(employeeIndex, employees[employeeIndex].status)
-	
 	employees[employeeIndex] = {
 		...employees[employeeIndex],
 		status: employees[employeeIndex].status === "ACTIVE" ? "OFFBOARDED" : "ACTIVE",
