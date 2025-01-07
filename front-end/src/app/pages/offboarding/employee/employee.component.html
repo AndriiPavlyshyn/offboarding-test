@@ -1,0 +1,44 @@
+<app-content-with-header>
+	<div class="left" left>
+		<app-page-title>{{ pageTitle() }}</app-page-title>
+
+		<button class="back-button flex items-center justify-between gap-1.5 font-bold group mt-5" routerLink="../">
+			<mat-icon class="group-hover:translate-x-[-3px] duration-300" fontIcon="arrow_back"></mat-icon>
+			Back
+		</button>
+	</div>
+
+	<div class="right" right>
+		<button [disabled]="(employee$ | async)?.status === 'OFFBOARDED'" (click)="offboard()" mat-flat-button mat-button class="back-button bg-amber-500 flex items-center justify-between gap-1.5 font-bold group mt-5">
+			Offboard
+		</button>
+	</div>
+
+	<div class="user-info my-6 grid gap-10 grid-cols-1" content>
+		<app-employee-details>
+			Employee details
+
+			<div class="info" content>
+				<div class="info-grid grid grid-cols-2 gap-3">
+					@for (detail of (employeeDetails$ | async); track detail.value) {
+						<div class="info-grid-item text-xl">
+							<strong class="capitalize">{{ detail.key }}:</strong> {{ detail.value }}
+						</div>
+					} @empty {
+						<h2>No Details</h2>
+					}
+				</div>
+			</div>
+		</app-employee-details>
+
+		<app-employee-details>
+			Equipment
+
+			<mat-list class="pl-5" role="list" content>
+				@for (item of (employee$ | async)?.equipments; track item) {
+					<mat-list-item class="border-b last:border-none" role="listitem">{{ item.name }}</mat-list-item>
+				}
+			</mat-list>
+		</app-employee-details>
+	</div>
+</app-content-with-header>

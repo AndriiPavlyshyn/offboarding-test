@@ -1,0 +1,20 @@
+@for(error of errorsKeys; track error) {
+  @switch (error.toLowerCase()) {
+    @case ('minlength') {
+      Min length is {{ control()?.errors?.['minlength'].requiredLength }} symbols
+      <strong>({{ control()?.errors?.['minlength'].actualLength }} / {{ control()?.errors?.['minlength'].requiredLength }})</strong>
+    }
+	  @case ('maxlength') {
+		  Max length is {{ control()?.errors?.['maxlength'].requiredLength }} symbols
+	  }
+	  @case ('postalcode') {
+		  Postal code is invalid
+	  }
+    @case ('required') {
+      This field is required.
+    }
+	  @case ('email') {
+		  Email is not valid.
+	  }
+  }
+}

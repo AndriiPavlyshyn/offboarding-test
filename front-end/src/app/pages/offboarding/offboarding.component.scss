@@ -1,0 +1,28 @@
+.mdc-data-table__header-row {
+  @apply bg-gray-300;
+
+  th,
+  td {
+	@apply border-0;
+  }
+
+  &:first-child th:first-child,
+  &:first-child td:first-child{
+	@apply rounded-tl-[8px];
+  }
+
+  &:first-child th:last-child,
+  &:first-child td:last-child {
+	@apply rounded-tr-[8px];
+  }
+
+  &:last-child th:first-child,
+  &:last-child td:first-child {
+	@apply rounded-bl-[8px];
+  }
+
+  &:last-child th:last-child,
+  &:last-child td:last-child {
+	@apply rounded-br-[8px];
+  }
+}

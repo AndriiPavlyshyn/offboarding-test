@@ -1,0 +1,71 @@
+<app-content-with-header>
+	<app-page-title left>{{ pageTitle() }}</app-page-title>
+
+	<mat-form-field class="w-full max-w-[400px]" matIconPrefix right>
+		<mat-label>Search by name or department</mat-label>
+
+		<input [(ngModel)]="search" matInput placeholder="Search by name or department">
+
+		<mat-icon fontIcon="search" matPrefix></mat-icon>
+	</mat-form-field>
+
+	<div class="table-container" content>
+		<table
+			[dataSource]="employees"
+			mat-table
+			matSort>
+
+			<ng-container matColumnDef="name">
+				<th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by number">
+					Full name
+				</th>
+				<td *matCellDef="let element" mat-cell> {{ element.name }}</td>
+			</ng-container>
+
+			<ng-container matColumnDef="email">
+				<th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by number">
+					Email
+				</th>
+				<td *matCellDef="let element" mat-cell> {{ element.email }}</td>
+			</ng-container>
+
+			<ng-container matColumnDef="department">
+				<th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by number">
+					Department
+				</th>
+				<td *matCellDef="let element" mat-cell> {{ element.department }}</td>
+			</ng-container>
+
+			<ng-container matColumnDef="equipments">
+				<th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by number">
+					Equipment
+				</th>
+				<td *matCellDef="let element" mat-cell> {{ getEquipmentString(element.equipments) }}</td>
+			</ng-container>
+
+			<ng-container matColumnDef="status">
+				<th *matHeaderCellDef mat-header-cell mat-sort-header sortActionDescription="Sort by number">
+					Status
+				</th>
+				<td *matCellDef="let element" mat-cell>
+					<div [class]="{
+					'bg-green-600': element.status === 'ACTIVE',
+					'bg-amber-400': element.status === 'OFFBOARDED'
+				}" class="status-badge px-2 py-1 text-center w-fit rounded text-white font-bold">
+						{{ element.status }}
+					</div>
+				</td>
+			</ng-container>
+
+			<tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+			<tr
+				*matRowDef="let row; columns: displayedColumns;"
+				[routerLink]="['../' + row.id]"
+				class="hover:bg-green-50 cursor-pointer duration-200"
+				mat-row></tr>
+		</table>
+
+		<div *ngIf="employees.filteredData.length === 0" class="empty-message p-3 text-center text-1xl">No results with value:
+			<strong>"{{ search() }}"</strong></div>
+	</div>
+</app-content-with-header>
