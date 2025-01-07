@@ -9,8 +9,8 @@
 	</div>
 
 	<div class="right" right>
-		<button [disabled]="(employee$ | async)?.status === 'OFFBOARDED'" (click)="offboard()" mat-flat-button mat-button class="back-button bg-amber-500 flex items-center justify-between gap-1.5 font-bold group mt-5">
-			Offboard
+		<button (click)="offboard()" mat-flat-button mat-button class="back-button bg-amber-500 flex items-center justify-between gap-1.5 font-bold group mt-5">
+			{{ (employee$ | async)?.status === 'OFFBOARDED' ? 'Make Active' : 'Offboard' }}
 		</button>
 	</div>
 

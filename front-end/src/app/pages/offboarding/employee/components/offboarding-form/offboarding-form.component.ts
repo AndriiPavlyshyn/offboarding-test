@@ -1,5 +1,5 @@
 import {JsonPipe}                                                                      from '@angular/common';
-import {Component, inject}                                                             from '@angular/core';
+import {Component, DestroyRef, inject}                                                 from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators}                       from '@angular/forms';
 import {MatButton}                                                                     from '@angular/material/button';
 import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
@@ -22,7 +22,7 @@ import {
 import {
 	postalCodeValidator
 }                                                                                      from '@shared/validators/postal-code.validator';
-import {EMPTY, switchMap, take}                                                        from 'rxjs';
+import {EMPTY, Subscription, switchMap, take}                                          from 'rxjs';
 import {
 	Employee
 }                                                                                      from '../../../../../../types/employee';
@@ -72,6 +72,8 @@ export class OffboardingFormComponent {
 	private readonly employeesService = inject<EmployeesService>(EmployeesService);
 	private readonly dialog: MatDialog = inject<MatDialog>(MatDialog);
 	private readonly snackBar = inject<MatSnackBar>(MatSnackBar);
+	private readonly destroyRef = inject<DestroyRef>(DestroyRef);
+	private subscription: Subscription = new Subscription();
 
 	public readonly offboardForm = new FormGroup<OffboardingForm>({
 		receiver: new FormControl<string>('', [Validators.required]),
@@ -84,23 +86,32 @@ export class OffboardingFormComponent {
 		notes: new FormControl<string>(''),
 	});
 
+	constructor() {
+		this.destroyRef.onDestroy(() => {
+			this.subscription.unsubscribe();
+		});
+	}
+
 	public submit(): void {
 		if (this.offboardForm.valid) {
-			this.employeesService.currentEmployee$
+			const sub: Subscription = this.employeesService.currentEmployee$
 				.pipe(
+					take(1),
 					switchMap((employee: Maybe<Employee>) => {
 						return employee ? this.employeesService.addEmployee(employee.id, this.offboardForm.value) : EMPTY;
 					}),
-					take(1)
 				)
 				.subscribe(() => {
+					const currentEmployee: Maybe<Employee> = this.employeesService.currentEmployee$.getValue();
+
 					this.snackBar.open('Employee successfully offboarded.', 'Close', {
 						duration: 2000,
 					});
 					this.dialog.closeAll();
+					this.employeesService.currentEmployee$.next({...currentEmployee, status: currentEmployee?.status === 'OFFBOARDED' ? 'ACTIVE' : 'OFFBOARDED'} as Employee);
+				});
 
-					this.employeesService.currentEmployee$.next({...this.employeesService.currentEmployee$.getValue(), status: 'OFFBOARDED'} as Employee);
-				})
+			this.subscription.add(sub);
 		}
 	}
 }
